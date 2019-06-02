@@ -12,8 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
 def sub_plot(size, small, big, x, subtitles, y, *y2):
@@ -51,3 +52,15 @@ def plot_lingress(df, toy):
     sub_plot((12, 4), 3, 0, np.linspace(-np.pi, np.pi, len(df)), subtitles, df, toy) 
     plt.suptitle("Toy Problem: Linear Regression", fontsize=15)
 
+def plot_se(data):
+    pd.DataFrame(data).plot(x='Bins', y=['Maximum', 'Uniform', 'Exp', 'Vals'], style = [ 'ro','b', 'g', 'y'])
+    plt.title("Shannon Entropy")
+    plt.ylabel("Entropy")
+    
+def plot_mi(scores):
+    labels, values = zip(*scores.items())
+    plt.figure(figsize=(4, 4))
+    plt.bar(np.arange(len(labels)), values)
+    plt.xticks(np.arange(len(labels)), labels, rotation=90)
+    plt.title("Toy Problem: Mutual Information")
+    plt.ylabel("MI with Variable of Interest")
