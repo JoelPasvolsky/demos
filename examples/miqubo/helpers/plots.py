@@ -16,27 +16,38 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 
-def subplot_xx_y(df):
-    xnum = df.shape[1]-1
-    gs = GridSpec(2, xnum)
-    plt.figure(figsize=(10, 10))
-    for i in range(xnum):
-        ax = 'ax_' + df.columns[i]
+def sub_plot(size, small, big, x, subtitles, y, *y2):
+    gs = GridSpec(big + 1, small)
+    plt.figure(figsize=size)
+    for i in range(small):
+        ax = 'ax_' + str(i)
         ax = plt.subplot(gs[0, i])
-        ax.set_title(df.columns[i])
-        ax.plot(np.linspace(-np.pi, np.pi, 100), df[df.columns[i]].values)
-    axy = plt.subplot(gs[1, :])
-    axy.set_title(df.columns[-1])
-    axy.plot(np.linspace(-np.pi, np.pi, 100), df[df.columns[-1]].values, 'r')
+        ax.set_title(subtitles[i])
+        if y2:
+            ax.plot(x, y2[0]['out'].values, 'ro')
+            ax.plot(x, y[y.columns[i]].values, 'bv')
+            ax.legend(["out", "model"])
+        else:
+            ax.plot(x, y[y.columns[i]].values)
+        
+    if big:
+        axy = plt.subplot(gs[1, :])
+        i += 1
+        axy.set_title(y.columns[i])
+        axy.plot(x, y[y.columns[i]].values, 'r') 
+    return plt
 
-def plot_vars_out(data, vars1, vars2, y, model):
-    ax1 = plt.subplot(1, 2, 1)
-    ax1.set_title("Modeling %s" % vars1[:2])
-    ax1.plot(np.linspace(-np.pi, np.pi, 100), y, 'ro')
-    ax1.plot(np.linspace(-np.pi, np.pi, 100), model((data[vars1[0]].values, data[vars1[1]].values), *vars1[2]), 'bv')
-    ax1.legend(["out", "model"])
-    ax2 = plt.subplot(1, 2, 2)
-    ax2.set_title("Modeling %s" % vars2[:2])
-    ax2.plot(np.linspace(-np.pi, np.pi, 100), y, 'ro')
-    ax2.plot(np.linspace(-np.pi, np.pi, 100), model((data[vars2[0]].values, data[vars2[1]].values), *vars2[2]), 'bv')
-    ax1.legend(["out", "model"])
+def plot_toy_signals(df):
+    sub_plot((10, 8), 3, True, np.linspace(-np.pi, np.pi, len(df)), df.columns, df)  
+    plt.suptitle("Toy Problem: System Inputs and Output", fontsize=15)
+
+def plot_two_var_model(df):
+    subtitles = ["Modeling %s and %s" % f0f1 for f0f1 in df.columns]
+    sub_plot((12, 4), 3, 0, np.linspace(-np.pi, np.pi, len(df)), subtitles, df) 
+    plt.suptitle("Toy Problem: Output Vesus Two-Signal Model", fontsize=15)
+
+def plot_lingress(df, toy):
+    subtitles = ["%s correlation coefficient: %.2f" % var_rval for var_rval in df.columns]
+    sub_plot((12, 4), 3, 0, np.linspace(-np.pi, np.pi, len(df)), subtitles, df, toy) 
+    plt.suptitle("Toy Problem: Linear Regression", fontsize=15)
+
