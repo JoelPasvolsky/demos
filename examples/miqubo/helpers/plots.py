@@ -1,4 +1,4 @@
-#    Copyright 2018 D-Wave Systems Inc.
+#    Copyright 2019 D-Wave Systems Inc.
 
 #    Licensed under the Apache License, Version 2.0 (the "License")
 #    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+import matplotlib.colors as colors
 
 def sub_plot(size, small, big, x, subtitles, y, *y2):
     gs = GridSpec(big + 1, small)
@@ -58,9 +59,42 @@ def plot_se(data):
     plt.ylabel("Entropy")
     
 def plot_mi(scores):
-    labels, values = zip(*scores.items())
-    plt.figure(figsize=(4, 4))
+    if len(scores) > 5:
+        plt.figure(figsize=(8, 5))
+    else:
+        plt.figure(figsize=(4, 4))
+    labels, values = zip(*sorted(scores.items(), key=lambda pair: pair[1], reverse=True))
     plt.bar(np.arange(len(labels)), values)
     plt.xticks(np.arange(len(labels)), labels, rotation=90)
-    plt.title("Toy Problem: Mutual Information")
+    plt.bar(np.arange(len(labels)), values)
+    plt.xticks(np.arange(len(labels)), labels, rotation=90)
+    plt.title("Mutual Information")
     plt.ylabel("MI with Variable of Interest")
+
+def plot_solutions(result):
+    features = []
+    energies = []
+    for sample, energy in result.data(['sample', 'energy']):
+        energies.append(energy)
+        features.append([key for (key, value) in sample.items() if value == 1])
+    plt.figure(figsize=(4, 4))
+    plt.bar(np.arange(len(features)), energies)
+    plt.xticks(np.arange(len(features)), features, rotation=90)
+    plt.title("Toy Problem: Unconstrained Solution")
+    plt.ylabel("Energy")
+
+def plot_features(features, selected_features):
+    fig = plt.figure(figsize=(6, 6))
+    ax = fig.add_axes([0.1, 0.3, .9, .7])
+    ax.set_title("Best Feature Selection")
+    ax.set_ylabel('Number of Selected Features')
+    ax.set_xticks(np.arange(len(features)))
+    ax.set_xticklabels(features, rotation=90)
+    ax.set_yticks(np.arange(len(features)))
+    ax.set_yticklabels(np.arange(1, len(features)+1))
+    # Set a grid on minor ticks
+    ax.set_xticks(np.arange(-0.5, len(features)), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(features)), minor=True)
+    ax.grid(which='minor', color='black')
+    ax.imshow(selected_features, cmap=colors.ListedColormap(['white', 'red']))
+    
