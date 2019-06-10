@@ -43,9 +43,9 @@ def plot_toy_signals(df):
     sub_plot((10, 8), 3, True, np.linspace(-np.pi, np.pi, len(df)), df.columns, df)  
     plt.suptitle("Toy Problem: System Inputs and Output", fontsize=15)
 
-def plot_two_var_model(df):
-    subtitles = ["Modeling %s and %s" % f0f1 for f0f1 in df.columns]
-    sub_plot((12, 4), 3, 0, np.linspace(-np.pi, np.pi, len(df)), subtitles, df) 
+def plot_two_var_model(df1, df2):
+    subtitles = ["Modeling %s and %s" % f0f1 for f0f1 in df1.columns]
+    sub_plot((12, 4), 3, 0, np.linspace(-np.pi, np.pi, len(df1)), subtitles, df1, df2) 
     plt.suptitle("Toy Problem: Output Vesus Two-Signal Model", fontsize=15)
 
 def plot_lingress(df, toy):
