@@ -12,10 +12,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-# Imports both in modules and JN for users skipping sections
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+import numpy as np
 import networkx as nx
-
 import sys
+
 from bokeh.io import show, output_notebook
 from bokeh.models import Plot, Range1d, MultiLine, Circle, Label, LabelSet, ColumnDataSource
 from bokeh.models import WheelZoomTool, ZoomInTool, ZoomOutTool, ResetTool, PanTool
@@ -61,3 +63,17 @@ def plot_bqm(bqm):
         
     show(plot)
     
+def plot_feature_selection(features, selected_features):
+    fig = plt.figure(figsize=(6, 6))
+    ax = fig.add_axes([0.1, 0.3, .9, .7])
+    ax.set_title("Best Feature Selection")
+    ax.set_ylabel('Number of Selected Features')
+    ax.set_xticks(np.arange(len(features)))
+    ax.set_xticklabels(features, rotation=90)
+    ax.set_yticks(np.arange(len(features)))
+    ax.set_yticklabels(np.arange(1, len(features)+1))
+    # Set a grid on minor ticks
+    ax.set_xticks(np.arange(-0.5, len(features)), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(features)), minor=True)
+    ax.grid(which='minor', color='black')
+    ax.imshow(selected_features, cmap=colors.ListedColormap(['white', 'red']))
